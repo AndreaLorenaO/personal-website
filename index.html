@@ -7,6 +7,8 @@
 <html>
 	<head>
 		<title>Lorena Odino</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon-v2.svg" />
+	  <link rel="shortcut icon" href="images/favicon-v2.svg" />
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -27,7 +29,7 @@
 							<div class="inner">
 								<h1>Lorena Odino</h1>
                 <p><strong>UX/UI Designer & Researcher</strong> with a strong background in science,<br /> 
-                  gaining extensive experience in field research, data analysis, and<br />
+                  including extensive experience in field research, data analysis, and<br />
                   applied problem-solving.<strong> Based in Munich, Germany</strong>.</p>
 							</div>
 						</div>
@@ -203,29 +205,30 @@
 						<!-- Contact -->
 							<article id="contact">
 								<h2 class="major">Contact</h2>
-                <form method="post" action="https://formspree.io/f/xqeyygpl">
+                <form id="contact-form" method="post" action="https://formspree.io/f/xqeyygpl">
 									<div class="fields">
 										<div class="field half">
 											<label for="name">Name</label>
-											<input type="text" name="name" id="name" />
+											<input type="text" name="name" id="name" required />
 										</div>
 										<div class="field half">
 											<label for="email">Email</label>
-											<input type="email" name="email" id="email" />
+											<input type="email" name="email" id="email" required />
 										</div>
 										<div class="field">
 											<label for="message">Message</label>
-											<textarea name="message" id="message" rows="4"></textarea>
+											<textarea name="message" id="message" rows="4" required></textarea>
 										</div>
 									</div>
 									<ul class="actions">
-										<li><input type="submit" value="Send Message" class="primary" /></li>
+										<li><input type="submit" value="Send Message" class="primary" id="submit-button" /></li>
 										<li><input type="reset" value="Reset" /></li>
 									</ul>
+                  <p id="form-status"></p>
 								</form>
 								<ul class="icons">
-									<li><a href="https://www.linkedin.com/in/lorena-odino/" class="icon brands fa-linkedin"><span class="label">Linkedin</span></a></li>
-									<li><a href="https://github.com/AndreaLorenaO" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+									<li><a href="https://www.linkedin.com/in/lorena-odino/" class="icon brands fa-linkedin" target="_blank" rel="noopener noreferrer"><span class="label">Linkedin</span></a></li>
+									<li><a href="https://github.com/AndreaLorenaO" class="icon brands fa-github" target="_blank" rel="noopener noreferrer"><span class="label">GitHub</span></a></li>
 								</ul>
 							</article>
 
@@ -479,8 +482,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 							<section>
 								<h2>Follow</h2>
 								<ul class="icons">
-									<li><a href="https://www.linkedin.com/in/lorena-odino/" class="icon brands style2 fa-linkedin"><span class="label">LinkedIn</span></a></li>
-									<li><a href="https://github.com/AndreaLorenaO" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
+									<li><a href="https://www.linkedin.com/in/lorena-odino/" class="icon brands style2 fa-linkedin" target="_blank" rel="noopener noreferrer"><span class="label">LinkedIn</span></a></li>
+									<li><a href="https://github.com/AndreaLorenaO" class="icon brands style2 fa-github" target="_blank" rel="noopener noreferrer"><span class="label">GitHub</span></a></li>
 								</ul>
 							</section>
 							<p class="copyright">&copy; 2025 Lorena Odino. All rights reserved. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
@@ -499,5 +502,78 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
 
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("contact-form");
+          const submitButton = document.getElementById("submit-button");
+          const status = document.getElementById("form-status");
+          const formFields = form.querySelectorAll("input, textarea");
+
+          function clearStatus() {
+            status.textContent = "";
+            status.className = "";
+          }
+
+          const contactArticle = document.getElementById("contact");
+
+          const observer = new MutationObserver(() => {
+            if (!contactArticle.classList.contains("active")) {
+              clearStatus();
+            }
+          });
+
+          observer.observe(contactArticle, { attributes: true, attributeFilter: ["class"] });
+
+          formFields.forEach(field => {
+            field.addEventListener("input", clearStatus);
+          });
+
+          form.addEventListener("reset", function () {
+            clearStatus();
+          });
+
+          form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            clearStatus();
+
+            submitButton.disabled = true;
+            submitButton.value = "Sending...";
+
+            const formData = new FormData(form);
+
+            try {
+              const response = await fetch(form.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                  "Accept": "application/json"
+                }
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                form.reset();
+                status.textContent = "Thanks! Your message was sent successfully.";
+                status.className = "success";
+              } else {
+                if (data.errors && data.errors.length > 0) {
+                  status.textContent = data.errors.map(error => error.message).join(", ");
+                } else {
+                  status.textContent = "Oops! There was a problem sending your message.";
+                }
+                status.className = "error";
+              }
+            } catch (error) {
+              status.textContent = "Oops! There was a network error.";
+              status.className = "error";
+            } finally {
+              submitButton.disabled = false;
+              submitButton.value = "Send Message";
+            }
+          });
+        });
+      </script>
 	</body>
 </html>

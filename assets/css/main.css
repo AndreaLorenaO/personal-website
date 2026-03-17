@@ -582,6 +582,24 @@ input, select, textarea {
 		opacity: 1.0;
 	}
 
+#form-status {
+	margin-top: 1rem;
+	font-size: 0.95rem;
+}
+
+#form-status.success {
+	color: #7CFC98;
+}
+
+#form-status.error {
+	color: #ff6b6b;
+}
+
+#submit-button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
 /* Box */
 
 	.box {
